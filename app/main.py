@@ -1,12 +1,9 @@
 class Person:
-    people = {}
-
     def __init__(self, name, age):
 
         self.name = name
         self.age = age
         self.spouse = None
-        Person.people[name] = self
 
     def __repr__(self):
 
@@ -15,15 +12,21 @@ class Person:
 
 
 def create_person_list(people_data):
+    person_dict = {}
     for person in people_data:
         name = person["name"]
         age = person["age"]
-        Person(name, age)
+        person_dict[name] = Person(name, age)
 
     for person in people_data:
         name = person["name"]
         spouse_name = person.get("wife") or person.get("husband")
         if spouse_name:
-            Person.people[name].spouse = Person.people.get(spouse_name)
+            if spouse_name in person_dict:
+                person_dict[name].spouse = person_dict[spouse_name]
+            else:
+                raise ValueError(
+                    f"Error for '{name}': Spouse name '{spouse_name}' not found in the data."
+                )
 
-    return list(Person.people.values())
+        return list(person_dict.values())
